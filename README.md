@@ -1,11 +1,12 @@
-# (UPDATE IN README.md) Project Title
+# Solar Detection
 
 (UPDATE IN README.md)
 Briefly describe the purpose/result(s) of your project, the skills you applied, and the AI4ALL Ignite program.
 
 *EXAMPLE:*
 *Uncovered and meticulously analyzed three distinct biases present in ChatGPT, employing advanced Python techniques and data analysis methodologies, all within AI4ALL's cutting-edge AI4ALL Ignite accelerator.*
-
+As part of the AI4ALL Ignite program, we learned about different AI and machine learning topics, as well as responsible AI.
+In a team of 3, we worked to create a supervised regression machine learning model that would detect the optimal environment/location for solar panel placement. Using Python, including pandas, numpy, matplotlib, and seaborn libraries, I created feature importance and feature correlation charts to help decide what variables to keep, cleaned the data by simplifying variables and removing other variables. Compared different regression models and landed on XGBoost which had the highest accuracy.
 
 ## Problem Statement <!--- do not change this line -->
 
@@ -14,6 +15,7 @@ Describe the motivation for this project, why it is relevant, and what its impac
 
 *EXAMPLE:*
 *Given the substantial daily output of responses, the identification and mitigation of ChatGPT's biases become critical, safeguarding both the multitude of users and the far-reaching consequences they may influence.*
+Given the worsening climate, we wanted to create something that could help increase the ease of renewable energy implementation. This project would hopefully make it easier for governments and businesses to implement solar panel installations, limiting greenhouse gas emissions.
 
 ## Key Results <!--- do not change this line -->
 
