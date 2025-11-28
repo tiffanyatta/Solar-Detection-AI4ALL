@@ -35,3 +35,10 @@ This project was completed by:
 - Bart Scheer
 - Linda Chen
 - Tiffany Atta
+
+## How To Use ##
+
+1. git clone repository
+2. In terminal: pip install -r requirements.txt
+3. Download the data sheet and add it to your Google Drive. Change the url so that it matches yours
+4. Run ai4all_blt_project.py
