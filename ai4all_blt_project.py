@@ -35,12 +35,12 @@ from sklearn.model_selection import KFold, cross_val_score
 # df = pd.read_csv("/content/sample_data/Pasion et al dataset.csv")
 
 #Nah, we gon do it wit google drive
-from google.colab import drive
-drive.mount("/content/drive")
+# from google.colab import drive
+# drive.mount("/content/drive")
 
-data_dir = "/content/drive/MyDrive/Google_Colab/"
-!ls $data_dir
-print(f"Data directory set to: {data_dir}")
+# data_dir = "/content/drive/MyDrive/Google_Colab/"
+# !ls $data_dir
+# print(f"Data directory set to: {data_dir}")
 
 # df = pd.read_csv(f"{data_dir}Pasion et al dataset (AI4ALL).gsheet")
 url = "1QZ16T9cNLx-2pKAqvwO_BYOIx5mi3Cvyb4K4LHfo46M" #how is this url working for everyone??
@@ -158,7 +158,7 @@ totalDays = (years*365.25) + (months*30.5) + days
 
 print(f"Years: {years}, months: {months}, days: {days}. Total days: {totalDays}")
 
-print(f"Unconverted first date: {df["Date"].min()}")
+print(f"Unconverted first date: {df['Date'].min()}")
 
 def convertTime(time):
   hours = int(time/100)
@@ -580,10 +580,10 @@ score = xgbRegressor.score(X_test, y_test)
 print(f"XGBoost Regression: {score:.3f}")
 
 print(df3.columns,"\n")
-print(f"AmbientTemp (air): minimum temp: {df3["AmbientTemp"].min()}\nmaximum temp: {df3["AmbientTemp"].max()}\nI'm guessing this is in \033[1mCelcius\033[0m and its just really hot where they have solar panels\n")
+print(f"AmbientTemp (air): minimum temp: {df3['AmbientTemp'].min()}\nmaximum temp: {df3['AmbientTemp'].max()}\nI'm guessing this is in \033[1mCelcius\033[0m and its just really hot where they have solar panels\n")
 print(f"Pressure: 1013mbar is average atmospheric pressure. IDK what the unit is but it goes from {df3['Pressure'].min()} to {df3['Pressure'].max()}\n")
 not722 = df3[df3["Cloud.Ceiling"] <722.0]
-print(f"Cloud.Ceiling: max (not including the 722 numbers which idk what they represent): {not722["Cloud.Ceiling"].max()}. 722 represents {((df3["Cloud.Ceiling"].count() - not722["Cloud.Ceiling"].count())/df3["Cloud.Ceiling"].count()):.4f} fraction of the original sample")
+print(f"Cloud.Ceiling: max (not including the 722 numbers which idk what they represent): {not722['Cloud.Ceiling'].max()}. 722 represents {((df3['Cloud.Ceiling'].count() - not722['Cloud.Ceiling'].count())/df3['Cloud.Ceiling'].count()):.4f} fraction of the original sample")
 df3.sample(n = 5, random_state = 1)
 
 #Example to see if XGBRegressor works
