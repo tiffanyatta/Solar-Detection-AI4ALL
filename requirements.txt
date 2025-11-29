@@ -1,9 +1,6 @@
 # Requirements for Solar Detection App
-# IMPORTANT: Python 3.13 compatibility issue
-# If you get build errors, use Python 3.11 or 3.12 instead (recommended)
-# Or try: pip install --upgrade pip setuptools wheel first
+# Compatible with Python 3.11 (specified in runtime.txt for Streamlit Cloud)
 
-# For Python 3.11/3.12 (recommended - use these exact versions):
 matplotlib==3.10.7
 numpy==1.26.4
 pandas==2.3.3
@@ -14,14 +11,3 @@ xgboost==3.1.2
 streamlit>=1.28.0
 joblib>=1.3.0
 kagglehub>=0.2.0
-
-# Alternative for Python 3.13 (uncomment if using Python 3.13):
-# matplotlib>=3.10.0
-# numpy>=2.0.0
-# pandas>=2.2.0
-# scikit-learn>=1.5.0
-# seaborn>=0.13.0
-# xgboost>=2.0.0
-# streamlit>=1.28.0
-# joblib>=1.3.0
-# kagglehub>=0.2.0
