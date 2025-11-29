@@ -1,0 +1,4 @@
+# Place your CSV data file here
+# The file should be named 'solar_data.csv' or update the path in model_trainer.py
+
+
