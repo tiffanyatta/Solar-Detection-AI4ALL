@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 from xgboost import XGBRegressor
 from sklearn.model_selection import train_test_split
-from data_processing import prepare_features, preprocess_data
+from data_processing import prepare_features, preprocess_data, load_data
 
 
 MODEL_DIR = "models"
@@ -38,7 +38,6 @@ def train_model(df=None, data_path=None, save_model=True):
                 f"Data file not found at {data_path}. "
                 f"Please place your CSV file in the '{DATA_DIR}' directory."
             )
-        from data_processing import load_data
         df = load_data(data_path)
     
     # Prepare features and target
@@ -97,6 +96,33 @@ def load_model(model_path=None):
     
     model = joblib.load(model_path)
     return model
+
+
+def get_target_mean(data_path=None):
+    """
+    Compute the mean of the target variable (PolyPwr) from the training data.
+
+    This is used to interpret predictions (e.g., to decide if a location is
+    above or below average suitability).
+
+    Args:
+        data_path: Optional path to the CSV data file. Defaults to DATA_PATH.
+
+    Returns:
+        Float mean of the target variable.
+    """
+    if data_path is None:
+        data_path = DATA_PATH
+
+    if not os.path.exists(data_path):
+        raise FileNotFoundError(
+            f"Data file not found at {data_path}. "
+            f"Please place your CSV file in the '{DATA_DIR}' directory."
+        )
+
+    df = load_data(data_path)
+    _, y = prepare_features(df)
+    return float(y.mean())
 
 
 def get_or_train_model(df=None, data_path=None, force_retrain=False):

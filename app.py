@@ -11,7 +11,7 @@ import os
 from pathlib import Path
 
 from data_processing import load_data, preprocess_data, get_feature_names, prepare_features
-from model_trainer import get_or_train_model, predict, load_model
+from model_trainer import get_or_train_model, predict, load_model, get_target_mean
 
 # Page configuration
 st.set_page_config(
@@ -145,10 +145,18 @@ def show_predict_page():
     st.header("🔮 Make Predictions")
     
     # Load or train model
+    target_mean = None
     with st.spinner("Loading model..."):
         try:
             model = get_or_train_model(force_retrain=False)
             st.session_state.model = model
+            # Compute and store the mean target value for interpretation
+            try:
+                target_mean = get_target_mean()
+                st.session_state.target_mean = target_mean
+            except Exception:
+                # Fallback: don't break the app if mean can't be computed
+                target_mean = None
             st.success("✅ Model loaded successfully!")
         except FileNotFoundError as e:
             st.error(f"❌ {str(e)}")
@@ -163,12 +171,12 @@ def show_predict_page():
     )
     
     if input_method == "📤 Upload CSV File":
-        predict_from_file(model)
+        predict_from_file(model, target_mean=target_mean)
     else:
-        predict_manual_input(model)
+        predict_manual_input(model, target_mean=target_mean)
 
 
-def predict_from_file(model):
+def predict_from_file(model, target_mean=None):
     """Handle predictions from uploaded CSV file."""
     st.subheader("Upload CSV File")
     
@@ -205,16 +213,32 @@ def predict_from_file(model):
                     if st.button("🔮 Predict Solar Suitability", type="primary"):
                         with st.spinner("Making predictions..."):
                             predictions = predict(model, X)
-                            
-                            # Add predictions to dataframe
-                            df_results = df.copy()
-                            df_results['Predicted_Solar_Power'] = predictions
-                            df_results['Suitability_Score'] = predictions
-                            
+
+                            # Build a concise results DataFrame:
+                            # - Predicted_Solar_Power: numeric prediction
+                            # - Sustainability_Label: above/below average suitability
+                            if target_mean is None:
+                                # If for some reason we couldn't compute the mean,
+                                # fallback to labeling everything as "Unknown".
+                                labels = ["Unknown"] * len(predictions)
+                            else:
+                                labels = [
+                                    "Above-average suitability" if p >= target_mean
+                                    else "Below-average suitability"
+                                    for p in predictions
+                                ]
+
+                            df_results = pd.DataFrame(
+                                {
+                                    "Predicted_Solar_Power": predictions,
+                                    "Sustainability_Label": labels,
+                                }
+                            )
+
                             # Display results
                             st.subheader("📊 Prediction Results")
                             st.dataframe(df_results, use_container_width=True)
-                            
+
                             # Summary statistics
                             col1, col2, col3, col4 = st.columns(4)
                             with col1:
@@ -225,7 +249,7 @@ def predict_from_file(model):
                                 st.metric("Min Prediction", f"{predictions.min():.2f}")
                             with col4:
                                 st.metric("Std Deviation", f"{predictions.std():.2f}")
-                            
+
                             # Download results
                             csv = df_results.to_csv(index=False)
                             st.download_button(
@@ -242,7 +266,7 @@ def predict_from_file(model):
             st.error(f"❌ Error reading file: {str(e)}")
 
 
-def predict_manual_input(model):
+def predict_manual_input(model, target_mean=None):
     """Handle predictions from manual input."""
     st.subheader("Manual Input")
     
@@ -362,7 +386,7 @@ def predict_manual_input(model):
             # Make prediction
             with st.spinner("Making prediction..."):
                 prediction = predict(model, features)[0]
-                
+
                 # Display result
                 st.markdown('<div class="prediction-box">', unsafe_allow_html=True)
                 st.markdown("### 🌞 Prediction Result")
@@ -371,17 +395,33 @@ def predict_manual_input(model):
                     f"{prediction:.2f}",
                     help="Higher values indicate better solar panel suitability"
                 )
-                
-                # Interpret result
-                if prediction > 20:
-                    st.success("✅ Excellent location for solar panel installation!")
-                elif prediction > 10:
-                    st.info("✅ Good location for solar panel installation")
-                elif prediction > 5:
-                    st.warning("⚠️ Moderate suitability for solar panel installation")
+
+                # Interpret result using the mean from the original data if available.
+                # We do NOT call a location "good" if it's below the dataset mean.
+                if target_mean is not None:
+                    # Define relative bands around the mean for more nuanced feedback
+                    high_threshold = target_mean * 1.5
+                    moderate_threshold = target_mean * 0.5
+
+                    if prediction >= high_threshold:
+                        st.success("✅ Excellent location for solar panel installation!")
+                    elif prediction >= target_mean:
+                        st.info("✅ Good location for solar panel installation")
+                    elif prediction >= moderate_threshold:
+                        st.warning("⚠️ Moderate suitability for solar panel installation")
+                    else:
+                        st.error("❌ Low suitability for solar panel installation")
                 else:
-                    st.error("❌ Low suitability for solar panel installation")
-                
+                    # Fallback to the original fixed thresholds if mean is unavailable
+                    if prediction > 20:
+                        st.success("✅ Excellent location for solar panel installation!")
+                    elif prediction > 10:
+                        st.info("✅ Good location for solar panel installation")
+                    elif prediction > 5:
+                        st.warning("⚠️ Moderate suitability for solar panel installation")
+                    else:
+                        st.error("❌ Low suitability for solar panel installation")
+
                 st.markdown('</div>', unsafe_allow_html=True)
 
 
