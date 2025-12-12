@@ -37,7 +37,9 @@ This project was completed by:
 - Tiffany Atta
 
 ## How To Use ##
+https://solar-detection-ai4all.streamlit.app/
 
+How to Fork: 
 1. git clone repository
 2. In terminal: pip install -r requirements.txt
 3. Download the data sheet and add it to your Google Drive. Change the url so that it matches yours
